@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from django.utils.translation import ugettext_lazy as _, ugettext as _tr
 from django.http import HttpResponse, HttpResponseRedirect, Http404
 from django.template import RequestContext

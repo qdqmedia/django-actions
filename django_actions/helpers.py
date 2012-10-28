@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from django.http import Http404
 from django.contrib.contenttypes.models import ContentType
 

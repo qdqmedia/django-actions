@@ -1,4 +1,4 @@
-# coding: utf8
+# -*- coding: utf-8 -*-
 from django.template import Library, Node, TemplateSyntaxError
 from django_actions.helpers import get_content_type_or_None
 from django_actions.helpers import parse_perms, get_description
