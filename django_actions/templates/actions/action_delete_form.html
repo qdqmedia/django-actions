@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block css %}
+    {{ block.super }}
+    <style type='text/css'>
+    <!--
+        label{ display: inline !important; }
+    -->
+    </style>
+{% endblock %}
+{% block content %}
+<center>
+<div class='forms'>
+    <form action='.' method='post' id='id_approve_delete_form'>
+        {% csrf_token %}
+        {{ form.as_ul }}
+        <input type='submit' value='submit'>
+    </form>
+</div>
+</center>
+{% endblock %}
