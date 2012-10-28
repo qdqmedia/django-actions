@@ -5,6 +5,7 @@ from django.core.urlresolvers import reverse
 from django_actions.forms import action_formset
 from django_actions.helpers import get_content_type_or_404
 
+
 def act(request, app_n_model):
     """ execute chosen action """
     app, model = app_n_model.split('.')
@@ -15,17 +16,17 @@ def act(request, app_n_model):
         formclass = action_formset(request, qset, ct.model_class())
         form = formclass(request.POST)
         if form.is_valid():
-            #items = ct.model_class().objects.filter(pk__in=(request.POST.get('items', None)))
             qset = form.act(form.cleaned_data['action'], form.cleaned_data['items'])
-            if 'response' in qset: 
+            if 'response' in qset:
                 request.session['ref'] = request.META.get('HTTP_REFERER', '/')
                 request.session.save()
                 return qset['response']
             else:
                 ref = request.session.get('ref', '/')
-                if 'ref' in request.session: del request.session['ref']
+                if 'ref' in request.session:
+                    del request.session['ref']
                 request.session.save()
                 return HttpResponseRedirect(ref)
-        else:       
+        else:
             return HttpResponseRedirect(referer)
     return HttpResponseRedirect(referer)
