@@ -1,6 +1,7 @@
-<select name='action' id='id_action'>
+<select name="action" id="id_action">
     <option value="None">--------</option>
     {% for action in actions %}
-    <option value="{{ action.0 }}">{{ action.1 }}</option>
+        <option value="{{ action.0 }}">{{ action.1 }}</option>
     {% endfor %}
 </select>
+<button class="btn" type="submit">Go</button>
