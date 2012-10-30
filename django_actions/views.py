@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponseRedirect
-from django_actions.forms import action_formset
+from django_actions.forms import ActionForm
 from django.contrib.contenttypes.models import ContentType
 
 
@@ -13,11 +13,14 @@ def act(request, app_n_model):
 
     if request.method == 'POST':
         qset = model_class.objects.filter(pk__in=(request.POST.getlist('items')))
-        formclass = action_formset(request, qset, model_class)
-        form = formclass(request.POST)
+
+        form = ActionForm(request.POST, qset=qset, model=model_class)
+
         if form.is_valid():
-            qset = form.execute_action(form.cleaned_data['action'],
-                                       form.cleaned_data['items'])
+            qset = form.execute_action(request,
+                                       form.cleaned_data['action'],
+                                       form.cleaned_data['items'],
+                                       model_class)
             if 'response' in qset:
                 request.session['ref'] = request.META.get('HTTP_REFERER', '/')
                 request.session.save()
