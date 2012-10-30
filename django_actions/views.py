@@ -1,7 +1,5 @@
 # -*- coding: utf-8 -*-
-from django.shortcuts import render_to_response
-from django.http import HttpResponseRedirect, HttpResponse, Http404
-from django.core.urlresolvers import reverse
+from django.http import HttpResponseRedirect
 from django_actions.forms import action_formset
 from django_actions.helpers import get_content_type_or_404
 
