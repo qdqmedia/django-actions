@@ -43,14 +43,11 @@ class GetActionListNode(Node):
 def get_action_list(parser, token):
     '''Call to render method passing app_model and varname used by template'''
     token_contents = token.split_contents()
+
     if len(token_contents) != 5 or (token_contents[1] != 'for' or token_contents[3] != 'as'):
         raise TemplateSyntaxError(error_msg)
-    #elif "'" in token_contents[2] or '"' in token_contents[2]:
-    app_model = token_contents[2]
-    #else:
-    #    raise TemplateSyntaxError(error_msg)
 
-    return GetActionListNode(app_model, token_contents[4])
+    return GetActionListNode(token_contents[2], token_contents[4])
 
 
 @register.inclusion_tag('actions_select.html')
