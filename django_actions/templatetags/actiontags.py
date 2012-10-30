@@ -1,62 +1,56 @@
 # -*- coding: utf-8 -*-
 from django.template import Library, Node, TemplateSyntaxError
-from django_actions.helpers import get_content_type_or_None
-from django_actions.helpers import parse_perms, get_description
+from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 
 register = Library()
 
+error_msg = 'Please, use: {% get_action_list for <app.model> as varname %}'
+
 
 class GetActionListNode(Node):
-    def __init__(self, app_n_model, varname, *args, **kwargs):
-        self.app_n_model = app_n_model
+    def __init__(self, app_model, varname, *args, **kwargs):
+        self.app_model = app_model
         self.varname = varname
 
     def render(self, context):
-        if isinstance(self.app_n_model, str) or\
-            isinstance(self.app_n_model, unicode):
-            action = self.app_n_model[1:-1]
-            app, model = action.split('.')
-        else:
-            inst = self.app_n_model.resolve(context, ignore_failures=True)
-            if hasattr(inst, 'model'):
-                model = inst.model._meta.module_name
-                app = inst.model._meta.app_label
-                action = "%s.%s" % (app, model)
+        '''Modify context to add a list of actions for given model'''
+        app, model = self.app_model.split('.')
+
+        try:
+            model_class = ContentType.objects.get(app_label=app,
+                                                  model=model).model_class()
+        except ObjectDoesNotExist:
+            raise TemplateSyntaxError(error_msg)
+
+        actions = []
+        if not hasattr(model_class, 'actions'):
+            return ''
+
+        model_actions = model_class.actions
+        for action in model_class.actions:
+            if hasattr(action, 'short_description'):
+                short_desc = action.short_description
             else:
-                raise TemplateSyntaxError("Nor string neither model or queryset was given")
-        user = context['user']
-        ct = get_content_type_or_None(app_label=app, model=model)
-        if ct:
-            model_class = ct.model_class()
-            _actions = []
-            for x in range(0, len(model_class.actions)):
-                if hasattr(model_class.actions[x], 'has_perms'):
-                    perms = [p.format(app=app, model=model) for p in model_class.actions[x].has_perms]
-                    if user.has_perms(perms):
-                        _actions.append((x,
-                            get_description(model_class.actions[x])))
-                else:
-                    _actions.append((x, get_description(model_class.actions[x])))
-            context[self.varname] = {'object_list': _actions, 'action': action, }
-            return ''
-        else:
-            context[self.varname] = None
-            return ''
+                short_desc = action.func_name
+            actions.append((model_actions.index(action), short_desc))
+        context[self.varname] = {'object_list': actions, 'action': self.app_model}
+        return ''
 
 
 @register.tag
 def get_action_list(parser, token):
-    bits = token.contents.split()
-    if len(bits) != 5:
-        raise TemplateSyntaxError('USE: {% get_action_list for <"app.model"|model|queryset> as varname %}')
-    if bits[1] != 'for' or bits[3] != 'as':
-        raise TemplateSyntaxError('USE {% get_action_list for <"app.model"|model|queryset> as varname %}')
-    if "'" in bits[2] or '"' in bits[2]:
-        inst = bits[2]
-    else:
-        inst = parser.compile_filter(bits[2])
-    return GetActionListNode(inst, bits[4])
+    '''Call to render method passing app_model and varname used by template'''
+    token_contents = token.split_contents()
+    if len(token_contents) != 5 or (token_contents[1] != 'for' or token_contents[3] != 'as'):
+        raise TemplateSyntaxError(error_msg)
+    #elif "'" in token_contents[2] or '"' in token_contents[2]:
+    app_model = token_contents[2]
+    #else:
+    #    raise TemplateSyntaxError(error_msg)
+
+    return GetActionListNode(app_model, token_contents[4])
 
 
 @register.inclusion_tag('actions_select.html')
