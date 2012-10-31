@@ -36,6 +36,9 @@ Now, we need to create a **actions.py** file in our application with the followi
             service.save()
         return {'qset': qset, 'message': _('Services has been updated!')}
 
+If your action pass a key called *message*, **django-actions** will use *Django's message framework* to
+display that message.
+
 The template where we're going to show *actions* for executing must contain a *form* as shows
 following code:
 
