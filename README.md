@@ -28,7 +28,7 @@ add a this action to our model called **Service**:
 
     actions = [update_services_action]
 
-Now, we need to create a **actions.py** file in our application with the following code:
+Now, we need to create an **actions.py** file in our application with the following code:
 
 
     def update_services_action(model, request, qset, **kwargs):
