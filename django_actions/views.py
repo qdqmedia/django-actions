@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.http import HttpResponseRedirect
+from django.contrib import messages
 from django_actions.forms import ActionForm
 from django.contrib.contenttypes.models import ContentType
 
@@ -22,14 +23,12 @@ def act(request, app_n_model):
                                        form.cleaned_data['items'],
                                        model_class)
             if 'response' in qset:
-                request.session['ref'] = request.META.get('HTTP_REFERER', '/')
-                request.session.save()
                 return qset['response']
             else:
                 # Action has been executed
-                ref = request.session.get('ref', '/')
-                del request.session['ref']
-                request.session.save()
+                ref = request.META.get('HTTP_REFERER', '/')
+                if 'message' in qset:
+                    messages.add_message(request, messages.INFO, qset['message'])
                 return HttpResponseRedirect(ref)
         else:
             return HttpResponseRedirect(referer)
