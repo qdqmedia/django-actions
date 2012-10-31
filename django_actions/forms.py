@@ -17,8 +17,8 @@ class ActionForm(forms.Form):
                                                for action in model.actions]
         super(ActionForm, self).__init__(*args, **kwargs)
 
-    def execute_action(self, request, action, _qset, model_class, **kwargs):
+    def execute_action(self, request, action, queryset, model_class, **kwargs):
         if action == 'None':
-            return {'qset': _qset}
+            return {'qset': queryset}
         action = model_class.actions[int(action)]
-        return action(request, _qset, model_class, **kwargs)
+        return action(model_class, request, queryset, **kwargs)
