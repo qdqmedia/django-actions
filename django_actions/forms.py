@@ -12,9 +12,13 @@ class ActionForm(forms.Form):
         del kwargs['qset']
         del kwargs['model']
         self.base_fields['items'].queryset = qset
-        self.base_fields['action'].choices = [(model.actions.index(action), \
-                                               action.short_description) \
-                                               for action in model.actions]
+        for action in model.actions:
+            try:
+                action_desc = action.short_description
+            except AttributeError:
+                action_desc = action.__name__
+            self.base_fields['action'].choices.append((model.actions.index(action),
+                                                       action_desc))
         super(ActionForm, self).__init__(*args, **kwargs)
 
     def execute_action(self, request, action, queryset, model_class, **kwargs):
