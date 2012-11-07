@@ -1,17 +1,22 @@
 # -*- coding: utf-8 -*-
 from django import forms
+from django.db.models.query import RawQuerySet
 
 
 class ActionForm(forms.Form):
-    items = forms.ModelMultipleChoiceField(queryset=[], widget=forms.MultipleHiddenInput())
+    #items = forms.ModelMultipleChoiceField(queryset=[], widget=forms.MultipleHiddenInput())
+    items = forms.MultipleChoiceField(widget=forms.MultipleHiddenInput())
     action = forms.ChoiceField(widget=forms.HiddenInput())
+    allqset = forms.CharField(max_length=1, required=False, widget=forms.HiddenInput())
 
     def __init__(self, *args, **kwargs):
         model = kwargs['model']
         qset = kwargs['qset']
         del kwargs['qset']
         del kwargs['model']
-        self.base_fields['items'].queryset = qset
+
+        self.base_fields['items'].choices = [(ele.pk, ele.pk) for ele in qset]
+
         for action in model.actions:
             try:
                 action_desc = action.short_description
