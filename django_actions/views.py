@@ -37,5 +37,5 @@ class ActionViewMixin(object):
                     new_qs.query = pickle.loads(request.session['serialized_qs'])
                 # Execute action passing values
                 action = request.POST['action']
-                return self.actions[int(action)-1](new_qs)
+                return self.actions[int(action)-1](qs=new_qs, request=request)
         return HttpResponseRedirect('.')
