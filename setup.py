@@ -10,7 +10,7 @@ setup(
     name='django-actions',
     version='0.0.1',
     description='',
-    long_description=open(os.path.join(os.path.dirname(__file__), 'README.rst')).read(),
+    long_description=open(os.path.join(os.path.dirname(__file__), 'README.md')).read(),
     url='https://github.com/qdqmedia/django-actions/',
     license='BSD License',
     platforms=['OS Independent'],
