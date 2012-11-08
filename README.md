@@ -2,77 +2,57 @@ django-actions
 ==============
 
 A small and simple application which would help you to implement actions similar to
-**django.contrib.admin** case for your custom tasks outside django admin. Also it
-provides custom form support if you would like to change some data for the queryset instances.
+**django.contrib.admin** case for your custom tasks outside *django admin* app.
 
-Based on [Django-actions](https://github.com/tarvitz/django-actions)
 
-Actions
--------
+Installation
+-------------
 
-You can create two kind of actions:
+Using *pip*:
 
-1. Actions which execute some code and return a *redirection* to *referer* page.
+    pip install https://github.com/qdqmedia/django-actions.git
 
-2. Actions which need a intermediate template and view, then return a *redirection* to a specific URL.
+Adding *django-actions* to *INSTALLED_APPS*:
+
+    INSTALLED_APPS += (
+        'django_actions'
+    )
+
 
 Usage
 ------
 
-Let's imagine that we need a simple action for updating a set of records. First, we're going to
-add a this action to our model called **Service**:
+You should create a *view* based Django class which inherits from a **mixin** view
+called **ActionViewMixin**. Your view shoud returns a [HttpResponse](https://docs.djangoproject.com/en/dev/ref/request-response/#django.http.HttpResponse) object. Also, your view will define a list with *actions* (functions or methods).
 
-    class Service(models.Model):
+*django-actions* provides a simple template for creating a *select* HTML node (*combobox*)
+which contains those actions that can be executed.
 
-    {...}
+Keep in mind that *django-actions* will use two *HTTP sessions* variables to store
+selected *queryset* (**serialized\_qs**), *model* class (**serialized\_model_qs**) used by
+that *queryset*, and number of items in *queryset* without pagination (**all\_items\_count**).
+This last one value is very useful to display a link for selecting all items.
 
-    actions = [update_services_action]
+Example
+--------
 
-Now, we need to create an **actions.py** file in our application with the following code:
+In your **views.py** file:
 
+    from django_actions.views import ActionViewMixin
+    from .actions import assign_service_action
 
-    def update_services_action(model, request, qset, **kwargs):
-        for service in qset:
-            service.save()
-        return {'qset': qset, 'message': _('Services has been updated!')}
-
-If your action pass a key called *message*, **django-actions** will use *Django's message framework* to
-display that message.
-
-The template where we're going to show *actions* for executing must contain a *form* as shows
-following code:
-
-    {% get_action_list for myapp.service as actions %}
-
-    {% if actions.object_list %}
-        <p>
-            <form action="{% url actions:action actions.action %}" method="post" id="id_action_posts" class="form-inline">
-            {% csrf_token %}
-            {% show_actions actions.object_list %}
-         </p>
-    {% endif %}
+    class ServiceList(ActionViewMixin, ListView):
+        actions = [assign_service_action]
 
 
-Keep in mind that **get\_action\_list** is a template tag implemented in **django-actions** which needs to
-receive application name followed by dot and model class name. In our example is **myapp.service** because our
-application is called **myapp** and **service** is our model.
+In your **actions.py** file:
 
-Advanced usage
---------------
+    def assign_service_action(**kwargs):
+        return HttpResponseRedirect('.')
 
-If we need to write a intermediate template and view, our action should return a **redirection** object as
-a value for a *key* called **response** inside a dictionary. Then a new view take the control and shoud
-deal with params receive for *form* which contains selected items in previous web page.
+In your *template* file:
 
-For example, the following action captures selected items and executes a redirection to a new view:
-
-    def assign_service_action(model, request, qset, **kwargs):
-        ct = ContentType.objects.get_for_model(qset.model)
-        selected = request.POST.getlist('items')
-        obj_redirect = HttpResponseRedirect(reverse('workflow:assign-service') +\
-                                                    '?ct={0}&ids={1}'.format(ct.pk,
-                                                                             ','.join(selected)))
-        return {'response': obj_redirect}
+    <form action="" method="post" id="id_action_posts" class="form-inline">
+    {% include 'actions_select.html' %}
 
 
-Don't forget to use *items* to get values for selected items in previous web page.
