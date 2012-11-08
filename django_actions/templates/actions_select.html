@@ -1,7 +1,8 @@
 <select name="action" id="id_action">
-    <option value="None">--------</option>
+    <option value="-1">--------</option>
     {% for action in actions %}
-        <option value="{{ action.0 }}">{{ action.1 }}</option>
+        <option value="{{ forloop.counter }}">{{ action }}</option>
     {% endfor %}
 </select>
 <button class="btn" type="submit">Go</button>
+<input type="hidden" value="0" name="select-across">
