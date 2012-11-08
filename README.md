@@ -33,6 +33,11 @@ selected *queryset* (**serialized\_qs**), *model* class (**serialized\_model_qs*
 that *queryset*, and number of items in *queryset* without pagination (**all\_items\_count**).
 This last one value is very useful to display a link for selecting all items.
 
+You can provide a simple description for your function using a *short_description* attribute,
+otherwise your function name will be use as *description*.
+
+A simple action to export a *queryset* data to CSV format is provided by *django-actions*.
+
 Example
 --------
 
@@ -48,11 +53,16 @@ In your **views.py** file:
 In your **actions.py** file:
 
     def assign_service_action(**kwargs):
+        qset = kwargs['qs']
         return HttpResponseRedirect('.')
+
+    assign_service_action.short_description = _('Assign service to')
 
 In your *template* file:
 
     <form action="" method="post" id="id_action_posts" class="form-inline">
     {% include 'actions_select.html' %}
 
+If you want to use an action to export to CSV format:
 
+    from django_actions.actions import export_csv_action
