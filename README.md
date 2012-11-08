@@ -10,7 +10,7 @@ Installation
 
 Using *pip*:
 
-    pip install https://github.com/qdqmedia/django-actions.git
+    pip install -e git+https://github.com/qdqmedia/django-actions.git#egg=django-actions
 
 Adding *django-actions* to *INSTALLED_APPS*:
 
