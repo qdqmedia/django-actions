@@ -46,14 +46,14 @@ In your **views.py** file:
     from django_actions.views import ActionViewMixin
     from .actions import assign_service_action
 
-    class ServiceList(ActionViewMixin, ListView):
-        actions = [assign_service_action]
+    class ServiceList(ListView):
+        actions = [disable_services]
 
 
 In your **actions.py** file:
 
-    def assign_service_action(**kwargs):
-        qset = kwargs['qs']
+    def disable_services(request, queryset):
+        queryset.update(disable=True)
         return HttpResponseRedirect('.')
 
     assign_service_action.short_description = _('Assign service to')
