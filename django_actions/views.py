@@ -5,6 +5,8 @@ from django.http import HttpResponseRedirect, HttpResponseForbidden
 
 
 class ActionViewMixin(object):
+    actions = ()
+
     def get_context_data(self, *args, **kwargs):
         object_list_displayed = kwargs['object_list']
         kwargs['all_items_count'] = object_list_displayed.count()
