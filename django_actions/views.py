@@ -47,7 +47,7 @@ class ActionViewMixin(object):
 
                 # Perform condition checks
                 if isinstance(action_to_execute, (tuple, list)):
-                    if not action[0](self.request):
+                    if not action_to_execute[0](self.request):
                         return HttpResponseForbidden()
                     action_to_execute = action_to_execute[1]
 
