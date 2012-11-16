@@ -44,10 +44,10 @@ Example
 In your **views.py** file:
 
     from django_actions.views import ActionViewMixin
-    from .actions import assign_service_action
+    from .actions import disable_services
 
     class ServiceList(ActionViewMixin, ListView):
-        actions = [assign_service_action]
+        actions = [disable_services]
 
 
 In your **actions.py** file:
@@ -56,7 +56,7 @@ In your **actions.py** file:
         queryset.update(disable=True)
         return HttpResponseRedirect('.')
 
-    assign_service_action.short_description = _('Assign service to')
+    disable_services.short_description = _('Disable services')
 
 In your *template* file:
 
