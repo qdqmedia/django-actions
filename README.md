@@ -62,6 +62,10 @@ In your *template* file:
 
     <form action="" method="post" id="id_action_posts" class="form-inline">
     {% include 'actions_select.html' %}
+    {% for item in object_list %}
+        <input class="action-select" name="action-select" value="{{ item.id }}" type="checkbox" form="id_action_posts"/>
+    {% endfor %}
+
 
 If you want to use an action to export to CSV format:
 
