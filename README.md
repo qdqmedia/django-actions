@@ -46,8 +46,8 @@ In your **views.py** file:
     from django_actions.views import ActionViewMixin
     from .actions import assign_service_action
 
-    class ServiceList(ListView):
-        actions = [disable_services]
+    class ServiceList(ActionViewMixin, ListView):
+        actions = [assign_service_action]
 
 
 In your **actions.py** file:
