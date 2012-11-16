@@ -41,6 +41,18 @@ A simple action to export a *queryset* data to CSV format is provided by *django
 Example
 --------
 
+In your **urls.py** file:
+
+     from django.conf.urls import patterns, url
+     from django.views.generic import ListView
+     from .models import Service
+
+
+     urlpatterns = patterns('',
+         url(r'^$', ListView.as_view(model=Services, template_name='services-list.html')),
+     )
+
+
 In your **views.py** file:
 
     from django_actions.views import ActionViewMixin
