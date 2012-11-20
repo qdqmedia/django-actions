@@ -64,7 +64,7 @@ In your **views.py** file:
 
 In your **actions.py** file:
 
-    def disable_services(request, queryset):
+    def disable_services(view, queryset):
         queryset.update(disable=True)
         return HttpResponseRedirect('.')
 

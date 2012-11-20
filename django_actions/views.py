@@ -19,7 +19,7 @@ class ActionViewMixin(object):
         for action in self.actions:
             # Only available under specific conditions
             if isinstance(action, (tuple, list)):
-                if not action[0](self.request):
+                if not action[0](self):
                     continue
                 action = action[1]
             available_actions.append(getattr(action, 'short_description', action.__name__))
@@ -47,9 +47,9 @@ class ActionViewMixin(object):
 
                 # Perform condition checks
                 if isinstance(action_to_execute, (tuple, list)):
-                    if not action_to_execute[0](self.request):
+                    if not action_to_execute[0](self):
                         return HttpResponseForbidden()
                     action_to_execute = action_to_execute[1]
 
-                return action_to_execute(request, qs)
+                return action_to_execute(self, qs)
         return HttpResponseRedirect('.')
