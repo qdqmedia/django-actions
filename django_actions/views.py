@@ -14,7 +14,7 @@ class ActionViewMixin(object):
         self.request.session['serialized_qs'] = pickle.dumps(object_list_displayed.query)
         self.request.session['serialized_model_qs'] = object_list_displayed.model
 
-        # Selecting actions for <select> node
+        # Actions available in templates
         available_actions = []
         for action in self.actions:
             # Only available under specific conditions
@@ -39,17 +39,19 @@ class ActionViewMixin(object):
                     qs = model_class.objects.all()[:1]
                     qs.query = pickle.loads(request.session['serialized_qs'])
 
+                validated_actions = []
+                for action in self.actions:
+                    if isinstance(action, (tuple, list)):
+                        if not action[0](self):
+                            continue
+                        action = action[1]
+                    validated_actions.append(action)
+
                 # Pick the submitted action
                 try:
-                    action_to_execute = self.actions[int(request.POST['action'])-1]
+                    action_to_execute = validated_actions[int(request.POST['action'])-1]
                 except (KeyError, IndexError, ValueError):
                     return HttpResponseForbidden()
-
-                # Perform condition checks
-                if isinstance(action_to_execute, (tuple, list)):
-                    if not action_to_execute[0](self):
-                        return HttpResponseForbidden()
-                    action_to_execute = action_to_execute[1]
 
                 return action_to_execute(self, qs)
         return HttpResponseRedirect('.')
