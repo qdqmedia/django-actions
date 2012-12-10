@@ -15,15 +15,19 @@ class ActionViewMixin(object):
         self.request.session['serialized_model_qs'] = object_list_displayed.model
 
         # Actions available in templates
-        available_actions = []
+        descriptions = []
         for action in self.actions:
             # Only available under specific conditions
             if isinstance(action, (tuple, list)):
                 if not action[0](self):
                     continue
                 action = action[1]
-            available_actions.append(getattr(action, 'short_description', action.__name__))
-        kwargs['actions'] = available_actions
+            action_description = getattr(action, 'short_description', action.__name__)
+            attrs = getattr(action, 'attrs', {})
+
+            descriptions.append((action_description, attrs))
+
+        kwargs['actions'] = descriptions
         return super(ActionViewMixin, self).get_context_data(**kwargs)
 
     def post(self, request, *args, **kwargs):

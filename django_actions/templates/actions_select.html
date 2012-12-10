@@ -1,9 +1,10 @@
+{% load i18n %}
 <select name="action" id="id_action">
     <option value="-1">--------</option>
-    {% for action in actions %}
-        <option value="{{ forloop.counter }}">{{ action }}</option>
+    {% for action, attrs in actions %}
+        <option {% if attrs.class %}class="{{attrs.class}}"{% endif %} value="{{ forloop.counter }}"> {{ action }}</option>
     {% endfor %}
 </select>
-<button class="btn" type="submit">Go</button>
+<button class="btn" type="submit">{% trans 'Go' %}</button>
 <input type="hidden" value="{{ all_items_count }}" name="all-items-count">
 <input type="hidden" value="0" name="select-across">
