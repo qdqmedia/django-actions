@@ -8,6 +8,7 @@ class ActionViewMixin(object):
     def get_context_data(self, *args, **kwargs):
         # Saves whole object list (without pagination) for eventual post
         kwargs['_whole_object_list'] = kwargs['object_list']
+        kwargs['all_items_count'] = kwargs['object_list'].count()
         # Actions available in templates
         descriptions = []
         for action in self.actions:
