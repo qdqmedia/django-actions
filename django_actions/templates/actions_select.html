@@ -6,5 +6,5 @@
     {% endfor %}
 </select>
 <button class="btn" type="submit">{% trans 'Go' %}</button>
-<input type="hidden" value="{{ all_items_count }}" name="all-items-count">
+<input type="hidden" value="{{ paginator.count }}" name="all-items-count">
 <input type="hidden" value="0" name="select-across">
