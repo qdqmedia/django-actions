@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from django.http import HttpResponseRedirect, HttpResponseForbidden
+from django.http import HttpResponseForbidden
+from django.shortcuts import redirect
 
 
 class ActionViewMixin(object):
@@ -49,4 +50,5 @@ class ActionViewMixin(object):
                     return HttpResponseForbidden()
 
                 return action_to_execute(self, qs)
-        return HttpResponseRedirect('.')
+
+        return redirect(request.META.get('HTTP_REFERER') or '.')
