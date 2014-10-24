@@ -8,7 +8,7 @@ class ActionViewMixin(object):
 
     def get_context_data(self, *args, **kwargs):
         # Saves whole object list (without pagination) for eventual post
-        kwargs['_whole_object_list'] = kwargs.pop('object_list', self.object_list)
+        kwargs['_whole_object_list'] = kwargs.get('object_list', self.object_list)
         # Actions available in templates
         descriptions = []
         for action in self.actions:
@@ -21,7 +21,7 @@ class ActionViewMixin(object):
             attrs = getattr(action, 'attrs', {})
             descriptions.append((action_description, attrs))
         kwargs['actions'] = descriptions
-        return super(ActionViewMixin, self).get_context_data(**kwargs)
+        return super(ActionViewMixin, self).get_context_data(*args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         # Getting current queryset from simulated get method
