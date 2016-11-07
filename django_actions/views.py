@@ -37,8 +37,7 @@ class ActionViewMixin(object):
                         qs = qs.filter(pk__in=(request.POST.getlist('action-select')))
                     else:
                         # select first `select-first-n` items
-                        qs = qs.model.objects.filter(
-                            pk__in=list(qs.values_list('pk', flat=True)[:int(request.POST['select-first-n'])]))
+                        qs = qs.model.objects.filter(pk__in=[__.pk for __ in qs[:int(request.POST['select-first-n'])]])
 
                 validated_actions = []
                 for action in self.actions:
